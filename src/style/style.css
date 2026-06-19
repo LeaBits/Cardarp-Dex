@@ -1,0 +1,25 @@
+#dex{
+    list-style: none;
+    padding: 0px;
+    margin: 0px auto;
+    max-width: 600px;
+    float: none;
+}
+
+#dex li{
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+}
+
+#dex li img{
+    display: inline-block;
+    max-width: 100%;
+}
+
+#dex li h3{
+    display: block;
+    font-weight: normal;
+    text-align: center;
+    text-transform: capitalize;
+}
