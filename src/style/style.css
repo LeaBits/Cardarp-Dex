@@ -1,25 +1,58 @@
-#dex{
-    list-style: none;
-    padding: 0px;
-    margin: 0px auto;
-    max-width: 600px;
-    float: none;
+.pokemon-card {
+    margin-bottom: 15px;
 }
 
-#dex li{
-    display: inline-block;
-    width: 49%;
+.pokemon-card .thumbnail {
+    position: relative;
     text-align: center;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
 }
 
-#dex li img{
-    display: inline-block;
+.pokemon-card.owned .thumbnail {
+    opacity: 1;
+}
+
+.pokemon-card img {
     max-width: 100%;
+    filter: grayscale(0%) brightness(0);
+    transition: filter 0.2s ease;
 }
 
-#dex li h3{
+.pokemon-card.owned img {
+    filter: none;
+}
+
+.pokemon-card .number {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pokemon-card .name {
     display: block;
-    font-weight: normal;
-    text-align: center;
     text-transform: capitalize;
+    font-weight: bold;
+}
+
+.pokemon-card.alternative-form .number {
+    display: none;
+}
+
+.pokemon-card.alternative-form .thumbnail {
+    border-color: red;
+}
+
+.filters .filter-actions {
+    margin-bottom: 10px;
+}
+
+.form-filters {
+    margin-top: 10px;
+}
+
+.form-filter-label {
+    margin-bottom: 8px;
 }
