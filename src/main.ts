@@ -87,7 +87,11 @@ async function renderApp(user: User | null) {
   }
 
   dexRoot.innerHTML = `
-    <img class="loading" src="/images/loading-buffering.gif" alt="Loading" />
+    <img
+        class="loading"
+        src="${import.meta.env.BASE_URL}images/loading-buffering.gif"
+        alt="Loading"
+        />
   `;
 
   await reloadDexes(user.uid);
