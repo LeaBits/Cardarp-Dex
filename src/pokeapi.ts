@@ -15,11 +15,16 @@ export type PokemonDetails = {
   name: string;
   sprites: {
     front_default: string | null;
+    other: {
+      "official-artwork": {
+        front_default: string | null;
+      };
+    };
   };
   species: {
     name: string;
     url: string;
-  }
+  };
 };
 
 const BASE_URL = "https://pokeapi.co/api/v2";

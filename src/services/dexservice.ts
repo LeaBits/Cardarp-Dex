@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./firebase";
-import type { Dex } from "../models/Dex";
+import type { Dex } from "../models/dex";
 import type { FormGroup } from "../models/forms";
 
 export async function createDex(uid: string, name: string): Promise<string> {
@@ -75,7 +75,7 @@ export async function deleteDex(
   );
 }
 
-import type { DexPokemon } from "../models/Dex";
+import type { DexPokemon } from "../models/dex";
 
 export async function loadDexPokemon(
   uid: string,

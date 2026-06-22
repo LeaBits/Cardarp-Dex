@@ -1,19 +1,19 @@
 import type { PokemonDetails } from "../pokeapi";
-import type { Dex, DexPokemon, TcgCardType } from "../models/Dex";
+import type { Dex, DexPokemon, TcgCardType } from "../models/dex";
 import { formGroups, type FormGroup } from "../models/forms";
-import { tcgCardTypes } from "../models/Dex";
+import { tcgCardTypes } from "../models/dex";
 import {
   loadDexPokemon,
   saveDexFilters,
   saveDexPokemon
-} from "../services/dexService";
+} from "../services/dexservice";
 import {
   getFormGroup,
   getFormName,
   isAlternativeForm
 } from "../utils/pokemon";
-import { renderFilterPanel } from "./FilterPanel";
-import { renderPokemonCard } from "./PokemonCard";
+import { renderFilterPanel } from "./filterpanel";
+import { renderPokemonCard } from "./pokemoncard";
 
 export class DexView {
   private enabledFormGroups: Set<FormGroup>;
@@ -85,7 +85,7 @@ export class DexView {
   private bindEvents() {
     document.querySelectorAll<HTMLInputElement>(".form-filter").forEach(input => {
       input.addEventListener("change", async event => {
-        const checkbox = event.currentTarget;
+        const checkbox = event.currentTarget as HTMLInputElement;
         const group = checkbox.value as FormGroup;
 
         if (checkbox.checked) {
@@ -106,7 +106,7 @@ export class DexView {
 
     document.querySelectorAll<HTMLButtonElement>(".pokemon-card").forEach(card => {
       card.addEventListener("click", async event => {
-        const button = event.currentTarget;
+        const button = event.currentTarget as HTMLButtonElement;
 
         const pokemonId = Number(button.dataset.pokemonId);
         const pokemonName = button.dataset.pokemonName ?? "";

@@ -2,25 +2,27 @@ import "./style/style.css";
 
 import type { User } from "firebase/auth";
 
-import { observeAuth } from "./services/authService";
-import { loadPokemon } from "./services/pokemonService";
+import { observeAuth } from "./services/authservice";
+import { loadPokemon } from "./services/pokemonservice";
 import {
   createDex,
   deleteDex,
   loadDexes,
   renameDex
-} from "./services/dexService";
+} from "./services/dexservice";
 
-import type { Dex } from "./models/Dex";
-import { DexView } from "./views/DexView";
-import { renderNavbar } from "./views/Navbar";
-import { renderDexSubNav } from "./views/DexSubNav";
+import type { Dex } from "./models/dex";
+import { DexView } from "./views/dexview";
+import { renderNavbar } from "./views/navbar";
+import { renderDexSubNav } from "./views/dexsubnav";
 
 const app = document.querySelector<HTMLDivElement>("#app");
 
 if (!app) {
   throw new Error("App element not found");
 }
+
+const appRoot = app;
 
 let currentUser: User | null = null;
 let pokemonCache: Awaited<ReturnType<typeof loadPokemon>> | null = null;
@@ -50,7 +52,7 @@ async function reloadDexes(uid: string) {
 async function renderApp(user: User | null) {
   currentUser = user;
 
-  app.innerHTML = `
+  appRoot.innerHTML = `
     <div id="navbar-root"></div>
     <div id="dex-subnav-root"></div>
 
@@ -165,7 +167,8 @@ function bindDexSubNavEvents() {
     link.addEventListener("click", async event => {
       event.preventDefault();
 
-      activeDexId = event.currentTarget.dataset.dexId ?? null;
+      const link = event.currentTarget as HTMLAnchorElement;
+        activeDexId = link.dataset.dexId ?? null;
 
       await renderDexArea();
     });

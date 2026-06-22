@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { login, logout } from "../services/authService";
+import { login, logout } from "../services/authservice";
 
 export function renderNavbar(
   container: HTMLElement,

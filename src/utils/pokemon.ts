@@ -3,7 +3,7 @@ import type { FormGroup } from "../models/forms";
 
 export function getIdFromUrl(url: string): number {
   const parts = url.split("/").filter(Boolean);
-  return Number(parts.at(-1));
+  return Number(parts[parts.length - 1]);
 }
 
 export function getSpeciesId(pokemon: PokemonDetails): number {

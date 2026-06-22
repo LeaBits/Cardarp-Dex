@@ -1,6 +1,6 @@
 import type { PokemonDetails } from "../pokeapi";
-import type { DexPokemon } from "../models/Dex";
-import { formatTcgCardType } from "../models/Dex";
+import type { DexPokemon } from "../models/dex";
+import { formatTcgCardType } from "../models/dex";
 import {
   getArtworkUrl,
   getFormClass,

@@ -1,4 +1,4 @@
-import type { Dex } from "../models/Dex";
+import type { Dex } from "../models/dex";
 
 export function renderDexSubNav(
   dexes: Dex[],
