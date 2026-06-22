@@ -35,24 +35,30 @@ export class DexView {
   async render() {
     await this.loadOwnedPokemon();
 
-    const visiblePokemon = this.pokemon.filter(pokemon => {
-      if (!this.matchesSearchQuery(pokemon)) {
-        return false;
-      }
+    const pokemonMatchingFormFilters = this.pokemon.filter(pokemon =>
+      this.matchesEnabledFormFilters(pokemon)
+    );
 
-      if (!isAlternativeForm(pokemon)) {
-        return true;
-      }
+    const ownedCount = pokemonMatchingFormFilters.filter(pokemon =>
+      this.ownedPokemon.has(pokemon.id)
+    ).length;
 
-      const group = getFormGroup(getFormName(pokemon));
+    const totalCount = pokemonMatchingFormFilters.length;
 
-      return group !== null && this.enabledFormGroups.has(group);
-    });
+    const percentage =
+      totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+
+    const visiblePokemon = pokemonMatchingFormFilters.filter(pokemon =>
+      this.matchesSearchQuery(pokemon)
+    );
 
     this.app.innerHTML = `
-      <h2>${this.dex.name}</h2>
+      <h2>
+        ${this.dex.name}
+        <small>(${ownedCount}/${totalCount}, ${percentage}%)</small>
+      </h2>
 
-        ${renderFilterPanel(this.enabledFormGroups)}
+      ${renderFilterPanel(this.enabledFormGroups)}
 
       <div class="pokemon-search form-group">
         <label for="pokemon-search-input">Search Pokémon</label>
@@ -74,6 +80,16 @@ export class DexView {
     `;
 
     this.bindEvents();
+  }
+
+  private matchesEnabledFormFilters(pokemon: PokemonDetails): boolean {
+    if (!isAlternativeForm(pokemon)) {
+      return true;
+    }
+
+    const group = getFormGroup(getFormName(pokemon));
+
+    return group !== null && this.enabledFormGroups.has(group);
   }
 
   private matchesSearchQuery(pokemon: PokemonDetails): boolean {
@@ -111,17 +127,17 @@ export class DexView {
 
   private bindEvents() {
     document
-        .querySelector<HTMLInputElement>("#pokemon-search-input")
-        ?.addEventListener("input", event => {
-            const input = event.currentTarget as HTMLInputElement;
-            this.searchQuery = input.value.toLowerCase().trim();
+      .querySelector<HTMLInputElement>("#pokemon-search-input")
+      ?.addEventListener("input", event => {
+        const input = event.currentTarget as HTMLInputElement;
+        this.searchQuery = input.value.toLowerCase().trim();
 
-            document.querySelectorAll<HTMLElement>(".pokemon-card-wrapper").forEach(item => {
-            const name = item.dataset.pokemonName?.toLowerCase() ?? "";
+        document.querySelectorAll<HTMLElement>(".pokemon-card-wrapper").forEach(item => {
+          const name = item.dataset.pokemonName?.toLowerCase() ?? "";
 
-            item.style.display = name.includes(this.searchQuery) ? "" : "none";
-            });
+          item.style.display = name.includes(this.searchQuery) ? "" : "none";
         });
+      });
 
     document.querySelectorAll<HTMLInputElement>(".form-filter").forEach(input => {
       input.addEventListener("change", async event => {
