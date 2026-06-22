@@ -4,7 +4,12 @@ import type { User } from "firebase/auth";
 
 import { observeAuth } from "./services/authService";
 import { loadPokemon } from "./services/pokemonService";
-import { createDex, loadDexes } from "./services/dexService";
+import {
+  createDex,
+  deleteDex,
+  loadDexes,
+  renameDex
+} from "./services/dexService";
 
 import type { Dex } from "./models/Dex";
 import { DexView } from "./views/DexView";
@@ -130,7 +135,7 @@ async function renderDexArea() {
     }
   );
 
-  dexView.render();
+  await dexView.render();
 }
 
 function bindDexSubNavEvents() {
@@ -165,6 +170,60 @@ function bindDexSubNavEvents() {
       await renderDexArea();
     });
   });
+
+  document
+    .querySelector<HTMLButtonElement>("#rename-dex-button")
+    ?.addEventListener("click", async () => {
+      if (!currentUser || !activeDexId) {
+        return;
+      }
+
+      const activeDex = dexes.find(dex => dex.id === activeDexId);
+
+      if (!activeDex) {
+        return;
+      }
+
+      const newName = window.prompt("Rename dex", activeDex.name)?.trim();
+
+      if (!newName) {
+        return;
+      }
+
+      await renameDex(currentUser.uid, activeDexId, newName);
+
+      await reloadDexes(currentUser.uid);
+      await renderDexArea();
+    });
+
+  document
+    .querySelector<HTMLButtonElement>("#delete-dex-button")
+    ?.addEventListener("click", async () => {
+      if (!currentUser || !activeDexId) {
+        return;
+      }
+
+      const activeDex = dexes.find(dex => dex.id === activeDexId);
+
+      if (!activeDex) {
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Delete "${activeDex.name}"? This cannot be undone.`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      await deleteDex(currentUser.uid, activeDexId);
+
+      activeDexId = null;
+
+      await reloadDexes(currentUser.uid);
+      await renderDexArea();
+    });
 }
 
 observeAuth(user => {

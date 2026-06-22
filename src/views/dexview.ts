@@ -1,7 +1,12 @@
 import type { PokemonDetails } from "../pokeapi";
-import type { Dex } from "../models/Dex";
+import type { Dex, DexPokemon, TcgCardType } from "../models/Dex";
 import { formGroups, type FormGroup } from "../models/forms";
-import { saveDexFilters } from "../services/dexService";
+import { tcgCardTypes } from "../models/Dex";
+import {
+  loadDexPokemon,
+  saveDexFilters,
+  saveDexPokemon
+} from "../services/dexService";
 import {
   getFormGroup,
   getFormName,
@@ -12,6 +17,7 @@ import { renderPokemonCard } from "./PokemonCard";
 
 export class DexView {
   private enabledFormGroups: Set<FormGroup>;
+  private ownedPokemon = new Map<number, DexPokemon>();
 
   constructor(
     private app: HTMLDivElement,
@@ -25,7 +31,9 @@ export class DexView {
     );
   }
 
-  render() {
+  async render() {
+    await this.loadOwnedPokemon();
+
     const visiblePokemon = this.pokemon.filter(pokemon => {
       if (!isAlternativeForm(pokemon)) {
         return true;
@@ -42,11 +50,36 @@ export class DexView {
       ${renderFilterPanel(this.enabledFormGroups)}
 
       <ul id="dex" class="row list-unstyled">
-        ${visiblePokemon.map(renderPokemonCard).join("")}
+        ${visiblePokemon
+          .map(pokemon => renderPokemonCard(pokemon, this.ownedPokemon))
+          .join("")}
       </ul>
     `;
 
     this.bindEvents();
+  }
+
+  private async loadOwnedPokemon() {
+    const ownedPokemon = await loadDexPokemon(this.uid, this.dex.id);
+
+    this.ownedPokemon = new Map(
+      ownedPokemon
+        .filter(pokemon => pokemon.owned && pokemon.cardType)
+        .map(pokemon => [pokemon.pokemonId, pokemon])
+    );
+  }
+
+  private getNextCardType(
+    currentType: TcgCardType | null
+  ): TcgCardType | null {
+    if (!currentType) {
+      return tcgCardTypes[0];
+    }
+
+    const currentIndex = tcgCardTypes.indexOf(currentType);
+    const nextType = tcgCardTypes[currentIndex + 1];
+
+    return nextType ?? null;
   }
 
   private bindEvents() {
@@ -68,6 +101,39 @@ export class DexView {
         );
 
         await this.onDexUpdated();
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>(".pokemon-card").forEach(card => {
+      card.addEventListener("click", async event => {
+        const button = event.currentTarget;
+
+        const pokemonId = Number(button.dataset.pokemonId);
+        const pokemonName = button.dataset.pokemonName ?? "";
+
+        const currentPokemon = this.ownedPokemon.get(pokemonId);
+        const currentType = currentPokemon?.cardType ?? null;
+        const nextType = this.getNextCardType(currentType);
+        const owned = nextType !== null;
+
+        const updatedPokemon: DexPokemon = {
+          pokemonId,
+          pokemonName,
+          owned,
+          cardType: nextType,
+          notes: currentPokemon?.notes ?? "",
+          updatedAt: Date.now()
+        };
+
+        await saveDexPokemon(this.uid, this.dex.id, updatedPokemon);
+
+        if (owned) {
+          this.ownedPokemon.set(pokemonId, updatedPokemon);
+        } else {
+          this.ownedPokemon.delete(pokemonId);
+        }
+
+        await this.render();
       });
     });
   }

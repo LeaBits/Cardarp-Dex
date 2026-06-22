@@ -280,6 +280,29 @@
     text-decoration: underline;
 }
 
+.dex-subbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@media (max-width: 767px) {
+    .dex-subbar-actions {
+        padding: 10px 16px;
+        display: grid;
+        grid-template-columns: auto auto 1fr auto;
+        gap: 6px;
+    }
+
+    .dex-subbar-form {
+        display: contents;
+    }
+
+    .dex-subbar-form input {
+        width: 100%;
+    }
+}
+
 /* =========================
    DEX SUBBAR
    ========================= */
@@ -387,6 +410,54 @@
 
 .pokemon-card.alternative-form .thumbnail {
     border-color: red;
+}
+
+.pokemon-card {
+  width: 100%;
+  border: 1px solid #ddd;
+  background: #fff;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.pokemon-card.owned {
+  opacity: 1;
+  border-color: #5cb85c;
+}
+
+.pokemon-card.owned img {
+  filter: none;
+}
+
+.pokemon-card .card-type {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.pokemon-card.card-type-normal {
+  border-color: #999;
+}
+
+.pokemon-card.card-type-holo {
+  border-color: #5bc0de;
+}
+
+.pokemon-card.card-type-reverse-holo {
+  border-color: #9370db;
+}
+
+.pokemon-card.card-type-illustration-rare {
+  border-color: #f0ad4e;
+}
+
+.pokemon-card.card-type-special-illustration-rare {
+  border-color: #d9534f;
+}
+
+.pokemon-card.card-type-promo {
+  border-color: #5cb85c;
 }
 
 .loading{
