@@ -125,7 +125,11 @@ async function renderDexArea() {
   }
 
   dexRoot.innerHTML = `
-    <img class="loading" src="/images/loading-buffering.gif" alt="Loading" />
+    <img
+        class="loading"
+        src="${import.meta.env.BASE_URL}images/loading-buffering.gif"
+        alt="Loading"
+        />
   `;
 
   const pokemon = await getPokemon();
