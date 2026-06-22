@@ -45,13 +45,16 @@ export function renderPokemonCard(
   }
 
   return `
-    <li class="col-xs-6 col-sm-4 col-md-3">
-      <button
+    <li
+        class="pokemon-card-wrapper col-xs-6 col-sm-4 col-md-3"
+        data-pokemon-name="${pokemon.name}"
+    >
+        <button
         type="button"
         class="${classes.join(" ")}"
         data-pokemon-id="${pokemon.id}"
         data-pokemon-name="${pokemon.name}"
-      >
+        >
         <span class="number">#${pokemon.id}</span>
 
         <img src="${artworkUrl}" alt="${pokemon.name}" />

@@ -18,6 +18,7 @@ import { renderPokemonCard } from "./pokemoncard";
 export class DexView {
   private enabledFormGroups: Set<FormGroup>;
   private ownedPokemon = new Map<number, DexPokemon>();
+  private searchQuery = "";
 
   constructor(
     private app: HTMLDivElement,
@@ -35,6 +36,10 @@ export class DexView {
     await this.loadOwnedPokemon();
 
     const visiblePokemon = this.pokemon.filter(pokemon => {
+      if (!this.matchesSearchQuery(pokemon)) {
+        return false;
+      }
+
       if (!isAlternativeForm(pokemon)) {
         return true;
       }
@@ -47,7 +52,19 @@ export class DexView {
     this.app.innerHTML = `
       <h2>${this.dex.name}</h2>
 
-      ${renderFilterPanel(this.enabledFormGroups)}
+        ${renderFilterPanel(this.enabledFormGroups)}
+
+      <div class="pokemon-search form-group">
+        <label for="pokemon-search-input">Search Pokémon</label>
+
+        <input
+          id="pokemon-search-input"
+          class="form-control"
+          type="search"
+          placeholder="Search by name..."
+          value="${this.searchQuery}"
+        />
+      </div>
 
       <ul id="dex" class="row list-unstyled">
         ${visiblePokemon
@@ -57,6 +74,16 @@ export class DexView {
     `;
 
     this.bindEvents();
+  }
+
+  private matchesSearchQuery(pokemon: PokemonDetails): boolean {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    return pokemon.name.toLowerCase().includes(query);
   }
 
   private async loadOwnedPokemon() {
@@ -83,6 +110,19 @@ export class DexView {
   }
 
   private bindEvents() {
+    document
+        .querySelector<HTMLInputElement>("#pokemon-search-input")
+        ?.addEventListener("input", event => {
+            const input = event.currentTarget as HTMLInputElement;
+            this.searchQuery = input.value.toLowerCase().trim();
+
+            document.querySelectorAll<HTMLElement>(".pokemon-card-wrapper").forEach(item => {
+            const name = item.dataset.pokemonName?.toLowerCase() ?? "";
+
+            item.style.display = name.includes(this.searchQuery) ? "" : "none";
+            });
+        });
+
     document.querySelectorAll<HTMLInputElement>(".form-filter").forEach(input => {
       input.addEventListener("change", async event => {
         const checkbox = event.currentTarget as HTMLInputElement;

@@ -226,6 +226,10 @@
   }
 } */
 
+.pokemon-search {
+  margin-bottom: 15px;
+}
+
 /* =========================
    MAIN NAVBAR
    ========================= */
@@ -367,6 +371,7 @@
 
 .pokemon-card {
     margin-bottom: 15px;
+    position: relative;
 }
 
 .pokemon-card .thumbnail {
@@ -392,10 +397,13 @@
 
 .pokemon-card .number {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 0;
+    left: 0px;
     font-size: 12px;
     font-weight: bold;
+    background: #000;
+    color: #fff;
+    padding: 5px;
 }
 
 .pokemon-card .name {
@@ -418,6 +426,7 @@
   background: #fff;
   opacity: 0.5;
   cursor: pointer;
+  padding: 10px;
 }
 
 .pokemon-card.owned {
@@ -430,34 +439,40 @@
 }
 
 .pokemon-card .card-type {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  font-weight: bold;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
 }
 
-.pokemon-card.card-type-normal {
-  border-color: #999;
+.pokemon-card.card-type-normal .card-type {
+  background-color: #999;
 }
 
-.pokemon-card.card-type-holo {
-  border-color: #5bc0de;
+.pokemon-card.card-type-holo .card-type{
+  background-color: #5bc0de;
 }
 
-.pokemon-card.card-type-reverse-holo {
-  border-color: #9370db;
+.pokemon-card.card-type-reverse-holo .card-type{
+  background-color: #9370db;
 }
 
-.pokemon-card.card-type-illustration-rare {
-  border-color: #f0ad4e;
+.pokemon-card.card-type-illustration-rare .card-type{
+  backgrlound-color: #f0ad4e;
 }
 
-.pokemon-card.card-type-special-illustration-rare {
-  border-color: #d9534f;
+.pokemon-card.card-type-special-illustration-rare .card-type{
+  background-color: #d9534f;
 }
 
-.pokemon-card.card-type-promo {
-  border-color: #5cb85c;
+.pokemon-card.card-type-promo .card-type{
+  background-color: #5cb85c;
 }
 
 .loading{
