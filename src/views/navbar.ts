@@ -11,10 +11,10 @@ export function renderNavbar(
 
         <a class="navbar-brand" href="#">
           <img
-            src="/images/logo.png"
+            src="${import.meta.env.BASE_URL}images/logo.png"
             alt="Cardarp Dex"
             class="navbar-logo"
-          />
+            />
 
           <span>Cardarp Dex</span>
         </a>
