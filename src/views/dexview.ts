@@ -1,7 +1,7 @@
 import type { PokemonDetails } from "../pokeapi";
 import type { Dex, DexPokemon, TcgCardType } from "../models/dex";
 import { formGroups, type FormGroup } from "../models/forms";
-import { tcgCardTypes } from "../models/dex";
+import { formatTcgCardType, tcgCardTypes } from "../models/dex";
 import {
   loadDexPokemon,
   saveDexFilters,
@@ -47,7 +47,25 @@ export class DexView {
         <small>(${ownedCount}/${totalCount}, ${percentage}%)</small>
       </h2>
 
-      ${renderFilterPanel(this.enabledFormGroups)}
+      <div class="dex-panels">
+        <details class="dex-panel">
+            <summary>
+            <span>Card type summary</span>
+            <span class="dex-panel-hint">Click to open</span>
+            </summary>
+
+            ${this.renderCardTypeSummary()}
+        </details>
+
+        <details class="dex-panel">
+            <summary>
+            <span>Species filters</span>
+            <span class="dex-panel-hint">Click to open</span>
+            </summary>
+
+            ${renderFilterPanel(this.enabledFormGroups)}
+        </details>
+    </div>
 
       <div class="pokemon-search form-group">
         <label for="pokemon-search-input">Search Pokémon</label>
@@ -62,13 +80,14 @@ export class DexView {
       </div>
 
       <ul id="dex" class="row list-unstyled"></ul>
+
       <button
         id="scroll-to-top"
         class="scroll-to-top"
         aria-label="Scroll to top"
-        >
+      >
         ↑
-        </button>
+      </button>
     `;
 
     this.renderPokemonList();
@@ -91,6 +110,46 @@ export class DexView {
       .join("");
 
     this.bindPokemonCardEvents();
+  }
+
+  private renderCardTypeSummary(): string {
+    const counts = new Map<TcgCardType, number>();
+
+    this.ownedPokemon.forEach(pokemon => {
+      if (!pokemon.cardType) {
+        return;
+      }
+
+      counts.set(
+        pokemon.cardType,
+        (counts.get(pokemon.cardType) ?? 0) + 1
+      );
+    });
+
+    if (counts.size === 0) {
+      return `<p class="text-muted">No cards selected yet.</p>`;
+    }
+
+    return `
+      <ul class="card-type-summary">
+        ${tcgCardTypes
+          .map(type => {
+            const count = counts.get(type) ?? 0;
+
+            if (count === 0) {
+              return "";
+            }
+
+            return `
+              <li>
+                <span>${formatTcgCardType(type)}</span>
+                <span class="badge">${count}</span>
+              </li>
+            `;
+          })
+          .join("")}
+      </ul>
+    `;
   }
 
   private getPokemonMatchingFormFilters(): PokemonDetails[] {
@@ -177,35 +236,26 @@ export class DexView {
     });
 
     const scrollButton =
-    document.querySelector<HTMLButtonElement>(
-        "#scroll-to-top"
-    );
+      document.querySelector<HTMLButtonElement>("#scroll-to-top");
 
     if (scrollButton) {
-    const updateVisibility = () => {
+      const updateVisibility = () => {
         if (window.scrollY > 400) {
-        scrollButton.classList.add("visible");
+          scrollButton.classList.add("visible");
         } else {
-        scrollButton.classList.remove("visible");
+          scrollButton.classList.remove("visible");
         }
-    };
+      };
 
-    updateVisibility();
+      updateVisibility();
+      window.addEventListener("scroll", updateVisibility);
 
-    window.addEventListener(
-        "scroll",
-        updateVisibility
-    );
-
-    scrollButton.addEventListener(
-        "click",
-        () => {
+      scrollButton.addEventListener("click", () => {
         window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+          top: 0,
+          behavior: "smooth"
         });
-        }
-    );
+      });
     }
   }
 

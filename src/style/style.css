@@ -96,6 +96,34 @@
   height: 34px;
 }
 
+/* DEX PANELS */
+
+.dex-panel summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  background: #f5f5f5;
+}
+
+.dex-panel summary::before {
+  content: "▸";
+  margin-right: 8px;
+}
+
+.dex-panel[open] summary::before {
+  content: "▾";
+}
+
+.dex-panel-hint {
+  font-size: 12px;
+  font-weight: normal;
+  color: #777;
+}
+
 /* FILTERS */
 
 .pokemon-search {
@@ -108,6 +136,26 @@
 
 .form-filters {
   margin-top: 10px;
+}
+
+/* CARD TYPE SUMMARY */
+
+.card-type-summary {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-type-summary li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.card-type-summary li:last-child {
+  border-bottom: none;
 }
 
 /* DEX GRID */
@@ -246,6 +294,36 @@
   margin: 0 auto;
 }
 
+/* SCROLL TO TOP */
+
+.scroll-to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #337ab7;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* MOBILE */
 
 @media (max-width: 767px) {
@@ -290,42 +368,4 @@
   .dex-subbar-form input {
     width: 100%;
   }
-}
-
-.scroll-to-top {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 48px;
-  height: 48px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: #337ab7;
-  color: white;
-
-  font-size: 24px;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  opacity: 0;
-  visibility: hidden;
-
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease,
-    transform 0.2s ease;
-
-  z-index: 1000;
-}
-
-.scroll-to-top:hover {
-  transform: translateY(-2px);
-}
-
-.scroll-to-top.visible {
-  opacity: 1;
-  visibility: visible;
 }
