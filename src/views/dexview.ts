@@ -35,22 +35,11 @@ export class DexView {
   async render() {
     await this.loadOwnedPokemon();
 
-    const pokemonMatchingFormFilters = this.pokemon.filter(pokemon =>
-      this.matchesEnabledFormFilters(pokemon)
-    );
-
-    const ownedCount = pokemonMatchingFormFilters.filter(pokemon =>
-      this.ownedPokemon.has(pokemon.id)
-    ).length;
-
+    const pokemonMatchingFormFilters = this.getPokemonMatchingFormFilters();
+    const ownedCount = this.getOwnedCount(pokemonMatchingFormFilters);
     const totalCount = pokemonMatchingFormFilters.length;
-
     const percentage =
       totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
-
-    const visiblePokemon = pokemonMatchingFormFilters.filter(pokemon =>
-      this.matchesSearchQuery(pokemon)
-    );
 
     this.app.innerHTML = `
       <h2>
@@ -72,14 +61,46 @@ export class DexView {
         />
       </div>
 
-      <ul id="dex" class="row list-unstyled">
-        ${visiblePokemon
-          .map(pokemon => renderPokemonCard(pokemon, this.ownedPokemon))
-          .join("")}
-      </ul>
+      <ul id="dex" class="row list-unstyled"></ul>
+      <button
+        id="scroll-to-top"
+        class="scroll-to-top"
+        aria-label="Scroll to top"
+        >
+        ↑
+        </button>
     `;
 
+    this.renderPokemonList();
     this.bindEvents();
+  }
+
+  private renderPokemonList() {
+    const dexList = document.querySelector<HTMLUListElement>("#dex");
+
+    if (!dexList) {
+      return;
+    }
+
+    const visiblePokemon = this.getPokemonMatchingFormFilters().filter(pokemon =>
+      this.matchesSearchQuery(pokemon)
+    );
+
+    dexList.innerHTML = visiblePokemon
+      .map(pokemon => renderPokemonCard(pokemon, this.ownedPokemon))
+      .join("");
+
+    this.bindPokemonCardEvents();
+  }
+
+  private getPokemonMatchingFormFilters(): PokemonDetails[] {
+    return this.pokemon.filter(pokemon =>
+      this.matchesEnabledFormFilters(pokemon)
+    );
+  }
+
+  private getOwnedCount(pokemonList: PokemonDetails[]): number {
+    return pokemonList.filter(pokemon => this.ownedPokemon.has(pokemon.id)).length;
   }
 
   private matchesEnabledFormFilters(pokemon: PokemonDetails): boolean {
@@ -130,13 +151,8 @@ export class DexView {
       .querySelector<HTMLInputElement>("#pokemon-search-input")
       ?.addEventListener("input", event => {
         const input = event.currentTarget as HTMLInputElement;
-        this.searchQuery = input.value.toLowerCase().trim();
-
-        document.querySelectorAll<HTMLElement>(".pokemon-card-wrapper").forEach(item => {
-          const name = item.dataset.pokemonName?.toLowerCase() ?? "";
-
-          item.style.display = name.includes(this.searchQuery) ? "" : "none";
-        });
+        this.searchQuery = input.value;
+        this.renderPokemonList();
       });
 
     document.querySelectorAll<HTMLInputElement>(".form-filter").forEach(input => {
@@ -160,6 +176,40 @@ export class DexView {
       });
     });
 
+    const scrollButton =
+    document.querySelector<HTMLButtonElement>(
+        "#scroll-to-top"
+    );
+
+    if (scrollButton) {
+    const updateVisibility = () => {
+        if (window.scrollY > 400) {
+        scrollButton.classList.add("visible");
+        } else {
+        scrollButton.classList.remove("visible");
+        }
+    };
+
+    updateVisibility();
+
+    window.addEventListener(
+        "scroll",
+        updateVisibility
+    );
+
+    scrollButton.addEventListener(
+        "click",
+        () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+        }
+    );
+    }
+  }
+
+  private bindPokemonCardEvents() {
     document.querySelectorAll<HTMLButtonElement>(".pokemon-card").forEach(card => {
       card.addEventListener("click", async event => {
         const button = event.currentTarget as HTMLButtonElement;
